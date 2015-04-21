@@ -3,7 +3,10 @@
 	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
 	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="D:/workspace-01/git_repo/EnkiCloudProject/lib/docker-java-1.0.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/workspace-01/git_repo/EnkiCloudProject/lib/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/workspace-01/git_repo/EnkiCloudProject/lib/jackson-annotations-2.4.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
