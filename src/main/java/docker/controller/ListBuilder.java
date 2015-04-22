@@ -10,7 +10,6 @@ import docker.component.DBContainer;
 import docker.component.DBNode;
 import docker.database.MySqlManager;
 import docker.event.EventCallbackManager;
-import docker.haservice.HAServer;
 
 import javax.ws.rs.ProcessingException;
 import java.util.ArrayList;
