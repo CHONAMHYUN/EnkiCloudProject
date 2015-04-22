@@ -18,7 +18,7 @@ public class DBContainer {
     public void setSeq(String seq) { this.seq = seq; }
     public void setCurrentStatus(String currentStatus) { this.currentStatus = currentStatus; }
     public void setCommandStatus(String commandStatus) { this.commandStatus = commandStatus; }
-    public void setUseContainer(String commandStatus) { this.useContainer = useContainer; }
+    public void setUseContainer(String useContainer) { this.useContainer = useContainer; }
 
     public String getIp() { return ip; }
     public String getImageName() { return imageName; }

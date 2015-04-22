@@ -2,9 +2,6 @@ package docker;
 
 import docker.controller.ListBuilder;
 import docker.haservice.HAServer;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.logging.Handler;
 
 /**
  * Created by nhcho on 2015-04-15.
