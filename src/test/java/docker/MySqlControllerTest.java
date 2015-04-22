@@ -1,7 +1,7 @@
 package docker;
 
+import controller.haserver.HAServer;
 import docker.controller.ListBuilder;
-import docker.haservice.HAServer;
 
 /**
  * Created by nhcho on 2015-04-15.

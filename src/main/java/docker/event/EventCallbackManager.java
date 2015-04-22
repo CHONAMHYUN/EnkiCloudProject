@@ -4,18 +4,21 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.EventCallback;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Event;
+
+import docker.Utility.DockerUtility;
 import docker.Utility.InstDockerClient;
-import docker.Utility.Pair;
-import docker.Utility.SV;
-import docker.Utility.Utility;
 import docker.component.DBContainer;
 import docker.component.DBNode;
 import docker.controller.ListBuilder;
-import docker.database.MySqlManager;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import utility.CommonUtility;
+import utility.Pair;
+import utility.SV;
+import mysql.manager.MySqlManager;
 
 /**
  * Created by nhcho on 2015-04-14.
@@ -153,9 +156,9 @@ public class EventCallbackManager {
     }
 
     public void TryToReConnect(String ip) {
-        String port = Utility.GetPort(ip);
+        String port = DockerUtility.GetPort(ip);
 
-        while(!Utility.isReachable(ip)) {
+        while(!CommonUtility.isReachable(ip)) {
             try {
                 System.out.println("STILL NODE DIE:" + ip);
                 Thread.sleep(1000);

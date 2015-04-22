@@ -2,16 +2,19 @@ package docker.controller;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
+
+import docker.Utility.DockerUtility;
 import docker.Utility.InstDockerClient;
-import docker.Utility.Pair;
-import docker.Utility.SV;
-import docker.Utility.Utility;
 import docker.component.DBContainer;
 import docker.component.DBNode;
-import docker.database.MySqlManager;
 import docker.event.EventCallbackManager;
 
 import javax.ws.rs.ProcessingException;
+
+import utility.Pair;
+import utility.SV;
+import mysql.manager.MySqlManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +53,8 @@ public class ListBuilder {
     }
 
     public void ClearAll() {
-        Utility.ClearContainerEventList();
-        Utility.ClearContainerRunList();
+        DockerUtility.ClearContainerEventList();
+        DockerUtility.ClearContainerRunList();
         ContainerDBList.clear();
         NodeList.clear();
     }
@@ -61,7 +64,7 @@ public class ListBuilder {
     }
     
     public void MakeContainerRunList() {
-        Utility.ClearContainerRunList();
+    	DockerUtility.ClearContainerRunList();
 
         String ip = "";
         String port = "";
@@ -120,7 +123,7 @@ public class ListBuilder {
             String ip = containerList.getL();
             for(Container container : containerList.getR()) {
                 // not find running Container in Database
-                DBContainer findContainer = Utility.findDBContainer(ip, container.getId());
+                DBContainer findContainer = DockerUtility.findDBContainer(ip, container.getId());
                 if(findContainer == null) {
                     // NOT FOUND DB Container
                     // Insert Row into CONTAINER_STATUS
@@ -131,7 +134,7 @@ public class ListBuilder {
                 else {
                     // compare db data and update, list update
                     // status info is different each other, update DB
-                    String status = Utility.GetStatus(container.getStatus());
+                    String status = DockerUtility.GetStatus(container.getStatus());
                     if(!findContainer.getCurrentStatus().equals(status)) {
                         DBListUpdate(ip, container);
                         mySqlManager.UpdateContainerStatus(ip, container);
@@ -147,7 +150,7 @@ public class ListBuilder {
 
         List<DBContainer> removeDBContainer = new ArrayList<DBContainer>();
         for(DBContainer dbContainer : ContainerDBList) {
-            Container findContainer = Utility.findRunContainer(dbContainer);
+            Container findContainer = DockerUtility.findRunContainer(dbContainer);
 
             // DB에는 있는데 실제(running container list)는 없다
             if(findContainer == null) {
@@ -166,7 +169,7 @@ public class ListBuilder {
 
     public void DBListAdd(String ip, Container container) {
         String seq = "1";
-        String status = Utility.GetStatus(container.getStatus());
+        String status = DockerUtility.GetStatus(container.getStatus());
         String id = container.getId();
         String imageName = container.getImage();
 
