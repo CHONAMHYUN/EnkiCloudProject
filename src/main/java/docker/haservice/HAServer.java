@@ -33,7 +33,7 @@ public class HAServer {
         destPort = "5014";
     }
 
-    public HAServer getInstance() {
+    public static HAServer getInstance() {
         if(haServer == null) {
             haServer = new HAServer();
         }
@@ -55,7 +55,7 @@ public class HAServer {
                         //System.out.println("FROM CLIENT :" + clientSentence);
                         SocketAddress remoteIp = connectionSocket.getRemoteSocketAddress();
                         System.out.print("From " + remoteIp.toString() + " : ");
-
+                        
                         String[] recvMsg = clientSentence.split(" ");
                         String header = recvMsg[0];
                         if (header != null) {
@@ -63,7 +63,7 @@ public class HAServer {
                                 // DB & Running Container list restart
                                 outToClient.writeBytes("OK\n");
                                 SV.setReloadFlag = true;
-                                ListBuilder.ReloadList(haServer);
+                                ListBuilder.ReloadList();
                             } else if (header.equals("stop")) {
                                 System.out.println("SERVER : stop signal from self client");
                                 outToClient.writeBytes("I get a stop signal from client\n");

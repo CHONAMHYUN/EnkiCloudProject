@@ -8,10 +8,7 @@ import docker.haservice.HAServer;
  */
 public class MySqlControllerTest {
     public static void main(String[] args) {
-        ListBuilder listBuilder = new ListBuilder();
-        listBuilder.MakeNodeList();
-
-        HAServer haServer = new HAServer();
-        haServer.ServerSideThreadRunning();
+        ListBuilder.getInstance().MakeNodeList();
+        HAServer.getInstance().ServerSideThreadRunning();
     }
 }

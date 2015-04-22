@@ -31,7 +31,7 @@ public class ListBuilder {
         this.listBuilder = this;
     }
 
-    public ListBuilder getInstance() {
+    public static ListBuilder getInstance() {
         if(listBuilder == null) listBuilder = new ListBuilder();
         return listBuilder;
     }
@@ -57,10 +57,10 @@ public class ListBuilder {
         NodeList.clear();
     }
 
-    public static void ReloadList(HAServer haServer) {
+    public static void ReloadList() {
         listBuilder.MakeNodeList();
     }
-
+    
     public void MakeContainerRunList() {
         Utility.ClearContainerRunList();
 
