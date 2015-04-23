@@ -10,6 +10,7 @@ import docker.component.DBNode;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import utility.CommonUtility;
 import utility.Pair;
@@ -21,7 +22,7 @@ import utility.SV;
 public class MySqlManager {
     private static List<DBNode> NodeList = SV.NodeList;
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
-    private static List<Pair<String,List<Container>>> ContainerRunList = SV.ContainerRunList;
+    private static Map<String, List<Container>> ContainerRunList = SV.ContainerRunList;
 
     private static Connection connection = null;
     private Statement statement = null;

@@ -11,12 +11,12 @@ import docker.event.EventCallbackManager;
 
 import javax.ws.rs.ProcessingException;
 
-import utility.Pair;
 import utility.SV;
 import mysql.manager.MySqlManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nhcho on 2015-04-15.
@@ -24,8 +24,8 @@ import java.util.List;
 public class ListBuilder {
     private static List<DBNode> NodeList = SV.NodeList;
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
-    private static List<Pair<String,List<Container>>> ContainerRunList = SV.ContainerRunList;
-    private static List<Pair<String,DockerClient>> ContainerEventList = SV.ContainerEventList;
+    private static Map<String,List<Container>> ContainerRunList = SV.ContainerRunList;
+    private static Map<String,DockerClient> ContainerEventList = SV.ContainerEventList;
     private MySqlManager mySqlManager = MySqlManager.getInstance();
     private static ListBuilder listBuilder = null;
 
@@ -76,8 +76,7 @@ public class ListBuilder {
             List<Container> containers = GetContainerRun(ip, port);
             if(containers == null) continue;
 
-            Pair<String, List<Container>> cont = new Pair<String, List<Container>>(ip, containers);
-            ContainerRunList.add(cont);
+            ContainerRunList.put(ip, containers);
 
             System.out.println("NODE IP = " + ip + " / Container info");
             for(Container co : containers) {
@@ -119,9 +118,11 @@ public class ListBuilder {
         boolean reloadContainerDBListFlag = false;
 
         // diff run container list with database
-        for(Pair<String, List<Container>> containerList : ContainerRunList) {
-            String ip = containerList.getL();
-            for(Container container : containerList.getR()) {
+        for( DBNode dbNode : NodeList ) {
+            String ip = dbNode.getIp();
+            List<Container> containers = ContainerRunList.get(ip);
+            
+            for(Container container : containers) {
                 // not find running Container in Database
                 DBContainer findContainer = DockerUtility.findDBContainer(ip, container.getId());
                 if(findContainer == null) {

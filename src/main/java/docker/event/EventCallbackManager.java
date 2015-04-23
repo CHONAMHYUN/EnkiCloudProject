@@ -14,9 +14,9 @@ import docker.listbuild.ListBuilder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import utility.CommonUtility;
-import utility.Pair;
 import utility.SV;
 import mysql.manager.MySqlManager;
 
@@ -26,8 +26,8 @@ import mysql.manager.MySqlManager;
 public class EventCallbackManager {
     private static List<DBNode> NodeList = SV.NodeList;
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
-    private static List<Pair<String, List<Container>>> ContainerRunList = SV.ContainerRunList;
-    private static List<Pair<String,DockerClient>> ContainerEventList = SV.ContainerEventList;
+    private static Map<String, List<Container>> ContainerRunList = SV.ContainerRunList;
+    private static Map<String, DockerClient> ContainerEventList = SV.ContainerEventList;
     private static MySqlManager mySqlManager = MySqlManager.getInstance();
 
     public EventCallback SetCallback(final String ip) {
@@ -67,8 +67,8 @@ public class EventCallbackManager {
                             mySqlManager.UpdateDatabase(ip, "die");
 
                             UpdateContainerDBList(ip, "die");
-                            ClearContainerEventIP(ip);
-                            ClearContainerRunIP(ip);
+                            ContainerEventList.remove(ip);
+                            ContainerRunList.remove(ip);
 
                             TryToReConnect(ip);
                         }
@@ -102,35 +102,6 @@ public class EventCallbackManager {
         }
     }
 
-    public void ClearContainerEventIP(String ip) {
-        List<Pair<String, DockerClient>> updateList = new ArrayList<Pair<String, DockerClient>>();
-        for(Pair<String, DockerClient> pair : ContainerEventList) {
-            if(pair.getL().equals(ip)) {
-                updateList.add(pair);
-                break;
-            }
-        }
-
-        for(Pair<String, DockerClient> client : updateList) {
-            ContainerEventList.remove(client);
-        }
-
-    }
-
-    public void ClearContainerRunIP(String ip) {
-        List<Pair<String, List<Container>>> updateList = new ArrayList<Pair<String, List<Container>>>();
-        for(Pair<String, List<Container>> pair : ContainerRunList) {
-            if(pair.getL().equals(ip)) {
-                updateList.add(pair);
-                break;
-            }
-        }
-
-        for(Pair<String, List<Container>> pair : updateList) {
-            ContainerRunList.remove(pair);
-        }
-    }
-
     public static  void MakeContainerEventList() {
         for(DBNode dbNode : NodeList) {
             String ip = dbNode.getIp();
@@ -150,9 +121,7 @@ public class EventCallbackManager {
         DockerClient dockerClient = (new InstDockerClient()).GetDockerClient(ip, port);
         dockerClient.eventsCmd(eventCallbackManager.SetCallback(ip)).withSince(sinceTime).exec();
 
-        Pair<String, DockerClient> dockerClientList = new Pair<String, DockerClient>(ip, dockerClient);
-
-        ContainerEventList.add(dockerClientList);
+        ContainerEventList.put(ip, dockerClient);
     }
 
     public void TryToReConnect(String ip) {
@@ -183,9 +152,8 @@ public class EventCallbackManager {
         }
         // Docker Daemon이 살아났다.Container Run list에 다시 등록
         List<Container> containers = ListBuilder.GetContainerRun(ip, port);
-        Pair<String, List<Container>> cont = new Pair<String, List<Container>>(ip, containers);
-        ContainerRunList.add(cont);
-
+        ContainerRunList.put(ip, containers);
+        
         // DB 업데이트
         UpdateContainerDBList(ip, "run");
         // Event Callback 등록

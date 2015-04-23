@@ -7,7 +7,9 @@ import docker.component.DBContainer;
 import docker.component.DBNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by nhcho on 2015-04-15.
@@ -17,10 +19,10 @@ public class SV {
     public static List<DBContainer> ContainerDBList = new ArrayList<DBContainer>();
 
     // ip, Docker Container list
-    public static List<Pair<String, List<Container>>> ContainerRunList = new ArrayList<Pair<String, List<Container>>>();
+    public static Map<String, List<Container>> ContainerRunList = new HashMap<String, List<Container>>();
 
     // ip, List of observing for Docker Event
-    public static List<Pair<String, DockerClient>> ContainerEventList = new ArrayList<Pair<String, DockerClient>>();
+    public static Map<String, DockerClient> ContainerEventList = new HashMap<String, DockerClient>();
 
     // reload flag
     public static boolean setReloadFlag = false;

@@ -2,8 +2,8 @@ package docker.Utility;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-import utility.Pair;
 import utility.SV;
 
 import com.github.dockerjava.api.DockerClient;
@@ -16,8 +16,8 @@ public class DockerUtility {
 	
     private static List<DBNode> NodeList = SV.NodeList;
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
-    private static List<Pair<String,List<Container>>> ContainerRunList = SV.ContainerRunList;
-    private static List<Pair<String,DockerClient>> ContainerEventList = SV.ContainerEventList;
+    private static Map<String, List<Container>> ContainerRunList = SV.ContainerRunList;
+    private static Map<String, DockerClient> ContainerEventList = SV.ContainerEventList;
     
     public static String GetStatus(String status) {
         String current = "die";
@@ -37,9 +37,11 @@ public class DockerUtility {
     public static void ClearContainerEventList() {
         Thread t = new Thread(new Runnable() {
             public void run() {
-                for(Pair<String, DockerClient> dockerClientPair : ContainerEventList) {
+            	for(DBNode dbNode : NodeList) {
+            		String ip = dbNode.getIp();
+            		DockerClient dockerClient = ContainerEventList.get(ip);
                     try {
-                        dockerClientPair.getR().close();
+                        dockerClient.close();
                     }
                     catch (IOException e) {
                         System.out.println("close docker's client event listener ERROR:" + e.toString());
@@ -53,9 +55,11 @@ public class DockerUtility {
     
 
     public static void ClearContainerRunList() {
-        for(Pair<String,List<Container>> containerRunListPair : ContainerRunList) {
-            containerRunListPair.getR().clear();
-        }
+    	for(DBNode dbNode : NodeList) {
+    		String ip = dbNode.getIp();
+    		ContainerRunList.get(ip).clear();
+    	}
+
         ContainerRunList.clear();
     }
 
@@ -70,19 +74,16 @@ public class DockerUtility {
     }
 
     public static Container findRunContainer(DBContainer dbc) {
-        Container container = null;
         String ip = dbc.getIp();
         String containerId = dbc.getContainerId();
 
-        for(Pair<String,List<Container>> container1 : ContainerRunList) {
-            if(ip.equals(container1.getL())) {
-                for(Container container2 : container1.getR()) {
-                    if(container2.getId().equals(containerId)) {
-                        return container2;
-                    }
-                }
-            }
+        List<Container> containers = ContainerRunList.get(ip);
+        for(Container container : containers) {
+        	if(containerId.equals(container.getId())) {
+        		return container;
+        	}
         }
+
         return null;
     }
 
