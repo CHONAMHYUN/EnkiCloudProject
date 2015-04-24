@@ -13,5 +13,8 @@
 	<body>
 		<c:url value="/showMessage.html" var="messageUrl" />
 		<a href="${messageUrl}">Click to enter !!!!</a>
+		<br>
+		<c:url value="/addControlTest.html" var="addControlUrl" />
+		<a href="${addControlUrl}">Click to enter Add Control!!!!</a>
 	</body>
 </html>
