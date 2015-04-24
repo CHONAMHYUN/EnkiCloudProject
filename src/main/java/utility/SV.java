@@ -3,6 +3,7 @@ package utility;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
 
+import database.CloudDatabaseManager;
 import docker.component.DBContainer;
 import docker.component.DBNode;
 
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import mysql.manager.MySqlManager;
 
 /**
  * Created by nhcho on 2015-04-15.
@@ -23,6 +26,8 @@ public class SV {
 
     // ip, List of observing for Docker Event
     public static Map<String, DockerClient> ContainerEventList = new HashMap<String, DockerClient>();
+    
+    public static CloudDatabaseManager cloudDatabaseManager = MySqlManager.getInstance();
 
     // reload flag
     public static boolean setReloadFlag = false;

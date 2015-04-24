@@ -2,6 +2,7 @@ package mysql.manager;
 
 import com.github.dockerjava.api.model.Container;
 
+import database.CloudDatabaseManager;
 import docker.Utility.DockerUtility;
 import docker.Utility.InstDockerClient;
 import docker.component.DBContainer;
@@ -19,32 +20,31 @@ import utility.SV;
 /**
  * Created by nhcho on 2015-04-15.
  */
-public class MySqlManager {
-    private static List<DBNode> NodeList = SV.NodeList;
+public class MySqlManager implements CloudDatabaseManager{
+	private static List<DBNode> NodeList = SV.NodeList;
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
     private static Map<String, List<Container>> ContainerRunList = SV.ContainerRunList;
-
+	
+	public static MySqlManager mySqlManager = null;
+	
     private static Connection connection = null;
     private Statement statement = null;
     private ResultSet resultSet = null;
     private PreparedStatement preparedStatement = null;
-
-    private static MySqlManager mySqlManager = null;
-
+    
     private enum NODESTATUS  {allrun, alldie, onlydaemonrun};
-
+	
+    public static CloudDatabaseManager getInstance() {
+    	if(mySqlManager == null) mySqlManager = new MySqlManager();
+    	return mySqlManager;
+    }
+	
     public MySqlManager() {
         intConnection();
     }
 
-    private void intConnection() {
+	public void intConnection() {
         try {
-            /*
-            Class.forName(className);
-            String connString = url + "?user=" + userId + "&password=" + password;
-            connection = DriverManager.getConnection(url);
-            */
-
             Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://192.168.10.155/oce?user=root&password=1111");
         }
@@ -55,12 +55,6 @@ public class MySqlManager {
             System.out.println("Class Not Found : " + e1.toString());
         }
     }
-
-    public static MySqlManager getInstance() {
-        if(mySqlManager == null) mySqlManager = new MySqlManager();
-        return mySqlManager;
-    }
-
 
     public void MakeNodeList() {
         List<Pair<String,NODESTATUS >> nodeStatus = new ArrayList<Pair<String, NODESTATUS>>();
@@ -114,7 +108,7 @@ public class MySqlManager {
         }
         catch (SQLException e) {
             System.out.println("MakeNodeList fail :" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
             return;
         }
         for(Pair<String,NODESTATUS> pair : nodeStatus) {
@@ -131,7 +125,7 @@ public class MySqlManager {
 
     }
 
-    private void UpdateNodeDaemon(String ip, String node, String daemon) {
+    public void UpdateNodeDaemon(String ip, String node, String daemon) {
       try {
             preparedStatement = connection.prepareStatement(SV.NodeDaemonUpdateQuery);
             preparedStatement.setString(1, node);
@@ -144,7 +138,7 @@ public class MySqlManager {
         }
         catch(SQLException e) {
             System.out.println("UpdateNodeDaemon SQLException :" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -173,7 +167,7 @@ public class MySqlManager {
         }
         catch (SQLException e) {
             System.out.println("MakeContainerDBList fail :" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -198,7 +192,7 @@ public class MySqlManager {
         }
         catch (SQLException e) {
             System.out.println("InsertContainer ERROR" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -215,7 +209,7 @@ public class MySqlManager {
         }
         catch(SQLException e) {
             System.out.println("UpdateContainerUse ERROR" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -242,7 +236,7 @@ public class MySqlManager {
         }
         catch(SQLException e) {
             System.out.println("UpdateContainerUse ERROR" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -260,7 +254,7 @@ public class MySqlManager {
         }
         catch(SQLException e) {
             System.out.println("UpdateContainerUse ERROR" + e.toString());
-            TryToReconnectMySQL();
+            TryToReconnectDatabase();
         }
     }
 
@@ -272,7 +266,7 @@ public class MySqlManager {
         }
     }
 
-    private void TryToReconnectMySQL() {
+    public void TryToReconnectDatabase() {
         while(true) {
             try {
                 if (connection.isClosed()) intConnection();

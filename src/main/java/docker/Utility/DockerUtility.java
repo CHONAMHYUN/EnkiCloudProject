@@ -57,7 +57,7 @@ public class DockerUtility {
     public static void ClearContainerRunList() {
     	for(DBNode dbNode : NodeList) {
     		String ip = dbNode.getIp();
-    		ContainerRunList.get(ip).clear();
+    		if(ContainerRunList.get(ip) != null) ContainerRunList.get(ip).clear();
     	}
 
         ContainerRunList.clear();
