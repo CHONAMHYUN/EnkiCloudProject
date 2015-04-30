@@ -3,7 +3,7 @@ package utility;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
 
-import database.CloudDatabaseManager;
+import database.DatabaseManagerParent;
 import docker.component.DBContainer;
 import docker.component.DBNode;
 
@@ -27,7 +27,7 @@ public class SV {
     // ip, List of observing for Docker Event
     public static Map<String, DockerClient> ContainerEventList = new HashMap<String, DockerClient>();
     
-    public static CloudDatabaseManager cloudDatabaseManager = MySqlManager.getInstance();
+    public static DatabaseManagerParent databaseManagerParent = MySqlManager.getInstance();
 
     // reload flag
     public static boolean setReloadFlag = false;

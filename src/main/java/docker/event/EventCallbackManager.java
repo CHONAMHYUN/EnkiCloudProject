@@ -5,7 +5,7 @@ import com.github.dockerjava.api.command.EventCallback;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Event;
 
-import database.CloudDatabaseManager;
+import database.DatabaseManagerParent;
 import docker.Utility.DockerUtility;
 import docker.Utility.InstDockerClient;
 import docker.component.DBContainer;
@@ -29,7 +29,7 @@ public class EventCallbackManager {
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
     private static Map<String, List<Container>> ContainerRunList = SV.ContainerRunList;
     private static Map<String, DockerClient> ContainerEventList = SV.ContainerEventList;
-    private static CloudDatabaseManager cloudDatabaseManager = SV.cloudDatabaseManager;
+    private static DatabaseManagerParent databaseManagerParent = SV.databaseManagerParent;
 
     public EventCallback SetCallback(final String ip) {
         EventCallback eventCallback = new EventCallback() {
@@ -40,17 +40,17 @@ public class EventCallbackManager {
                 System.out.print(",From=" + event.getFrom());
                 System.out.println(",Time=" + event.getTime());
                 if(event.getStatus().equals("stop")) {
-                	cloudDatabaseManager.UpdateDatabase(ip, "die");
+                	databaseManagerParent.UpdateDatabase(ip, "die");
                     UpdateContainerDBList(ip, "die");
                 }
                 else if(event.getStatus().equals("start")) {
-                	cloudDatabaseManager.UpdateDatabase(ip, "run");
+                	databaseManagerParent.UpdateDatabase(ip, "run");
                     UpdateContainerDBList(ip, "run");
                 }
                 else if(event.getStatus().equals("create")) {
                 }
                 else if(event.getStatus().equals("destroy")) {
-                	cloudDatabaseManager.UpdateContainerUse(ip, event.getId(), "N", "die");
+                	databaseManagerParent.UpdateContainerUse(ip, event.getId(), "N", "die");
                 }
             }
 
@@ -65,7 +65,7 @@ public class EventCallbackManager {
                     final int numEvent = numEvents;
                     Thread t = new Thread(new Runnable() {
                         public void run() {
-                        	cloudDatabaseManager.UpdateDatabase(ip, "die");
+                        	databaseManagerParent.UpdateDatabase(ip, "die");
 
                             UpdateContainerDBList(ip, "die");
                             ContainerEventList.remove(ip);

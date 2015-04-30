@@ -3,7 +3,7 @@ package docker.listbuild;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
 
-import database.CloudDatabaseManager;
+import database.DatabaseManagerParent;
 import docker.Utility.DockerUtility;
 import docker.Utility.InstDockerClient;
 import docker.component.DBContainer;
@@ -27,7 +27,7 @@ public class ListBuilder {
     private static List<DBContainer> ContainerDBList = SV.ContainerDBList;
     private static Map<String,List<Container>> ContainerRunList = SV.ContainerRunList;
     private static Map<String,DockerClient> ContainerEventList = SV.ContainerEventList;
-    private static CloudDatabaseManager cloudDatabaseManager = SV.cloudDatabaseManager;
+    private static DatabaseManagerParent databaseManagerParent = SV.databaseManagerParent;
     private static ListBuilder listBuilder = null;
 
     public ListBuilder() {
@@ -42,8 +42,8 @@ public class ListBuilder {
     public void MakeNodeList() {
         ClearAll();
 
-        cloudDatabaseManager.MakeNodeList();
-        cloudDatabaseManager.MakeContainerDBList();
+        databaseManagerParent.MakeNodeList();
+        databaseManagerParent.MakeContainerDBList();
 
         MakeContainerRunList();
         SyncContainerLists();
@@ -130,7 +130,7 @@ public class ListBuilder {
                     // NOT FOUND DB Container
                     // Insert Row into CONTAINER_STATUS
                     DBListAdd(ip, container);
-                    cloudDatabaseManager.InsertContainer(ip, container);
+                    databaseManagerParent.InsertContainer(ip, container);
 
                 }
                 else {
@@ -139,12 +139,12 @@ public class ListBuilder {
                     String status = DockerUtility.GetStatus(container.getStatus());
                     if(!findContainer.getCurrentStatus().equals(status)) {
                         DBListUpdate(ip, container);
-                        cloudDatabaseManager.UpdateContainerStatus(ip, container);
+                        databaseManagerParent.UpdateContainerStatus(ip, container);
                     }
 
                     if(findContainer.getImageName() == null || findContainer.getImageName().trim().length() == 0) {
                         DBListUpdate(ip, container);
-                        cloudDatabaseManager.UpdateContainerImageName(ip, container);
+                        databaseManagerParent.UpdateContainerImageName(ip, container);
                     }
                 }
             }
@@ -164,7 +164,7 @@ public class ListBuilder {
 
         for(DBContainer dbContainer : removeDBContainer) {
             ContainerDBList.remove(dbContainer);
-            cloudDatabaseManager.UpdateContainerUse(dbContainer.getIp(), dbContainer.getContainerId(), "N", "die");
+            databaseManagerParent.UpdateContainerUse(dbContainer.getIp(), dbContainer.getContainerId(), "N", "die");
         }
 
     }

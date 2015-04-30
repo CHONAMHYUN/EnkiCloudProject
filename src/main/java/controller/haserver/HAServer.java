@@ -31,8 +31,8 @@ public class HAServer {
 
     public HAServer() {
         ip = "192.168.10.155";
-        serverPort = "5014";
-        destPort = "5014";
+        serverPort = "5013";
+        destPort = "5013";
     }
 
     public static HAServer getInstance() {
